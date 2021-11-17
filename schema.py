@@ -274,7 +274,12 @@ def _priority(s):
 
 
 def _invoke_with_optional_kwargs(f, **kwargs):
-    s = inspect.signature(f)
+    try:
+        s = inspect.signature(f)
+    except ValueError:
+        # some default types does not have signature. We ignore the kwargs
+        # for these cases
+        return f()
     if len(s.parameters) == 0:
         return f()
     return f(**kwargs)
